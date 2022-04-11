@@ -31,6 +31,7 @@ function getRandom() {
 }
 
 function setUpButtons(guesses, checkCorrect) {
+  document.getElementById('buttons').innerHTML = '';
   solfeg.forEach((name, index) => {
     const button = document.createElement('button');
     button.id = name;
@@ -47,9 +48,11 @@ function main() {
   function checkCorrect(guesses) {
     if (guesses.length < musica.length) { return; }
     const correct = musica.every((note, index) => guesses[index] == note);
-    alert('u did ' + correct);
+    document.getElementById('answer').innerHTML = correct;
   }
+  document.getElementById('answer').innerHTML = '';
   playNotes(musica);
 }
 
-main();
+document.getElementById('play').onclick = main;
+document.onkeypress = (event) => event.target.keycode === 13 ? main() : null;
