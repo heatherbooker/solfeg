@@ -9,11 +9,6 @@ const solfeg = ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te'
 const frequencies = {};
 solfeg.forEach((name, index) => {
   frequencies[name] = rootPitch * Math.pow(2, index/12);
-  const button = document.createElement('button');
-  button.id = name;
-  button.innerHTML = name;
-  button.onclick = () => console.log(name);
-  document.getElementById('buttons').appendChild(button);
 });
 
 
@@ -35,4 +30,26 @@ function getRandom() {
   return solfeg[Math.floor(Math.random() * solfeg.length)];
 }
 
-playNotes(['do', getRandom()]);
+function setUpButtons(guesses, checkCorrect) {
+  solfeg.forEach((name, index) => {
+    const button = document.createElement('button');
+    button.id = name;
+    button.innerHTML = name;
+    button.onclick = () => { guesses.push(name); checkCorrect(guesses); };
+    document.getElementById('buttons').appendChild(button);
+  });
+}
+
+function main() {
+  const guesses = [];
+  const musica = ['do', getRandom()];
+  setUpButtons(guesses, checkCorrect);
+  function checkCorrect(guesses) {
+    if (guesses.length < musica.length) { return; }
+    const correct = musica.every((note, index) => guesses[index] == note);
+    alert('u did ' + correct);
+  }
+  playNotes(musica);
+}
+
+main();
