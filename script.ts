@@ -51,10 +51,14 @@ function setUpButtons(guesses, checkCorrect) {
   });
 }
 
-function get_frequencies() {
+interface Frequencies {
+  [key:string]: Number;
+}
+
+function get_frequencies(): Frequencies {
   const a1 = 110; // A1 is 110 Hz
   const rootPitch = Math.random() * 700 + a1;
-  const frequencies = {};
+  const frequencies: Frequencies = {};
   solfeg.forEach((name, index) => {
     frequencies[name] = rootPitch * Math.pow(2, index/12);
   });
