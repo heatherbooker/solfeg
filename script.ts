@@ -3,7 +3,20 @@ const volume = audioContext.createGain();
 volume.connect(audioContext.destination);
 volume.gain.value = .2;
 
-const solfeg = ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te', 'ti'];
+type SolfegSound = 'do'
+                 | 're'
+                 | 'ra'
+                 | 'me'
+                 | 'mi'
+                 | 'fa'
+                 | 'se'
+                 | 'so'
+                 | 'le'
+                 | 'la'
+                 | 'te'
+                 | 'ti' ;
+
+const solfeg: Array<SolfegSound> = ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te', 'ti'];
 
 function playNotes(which, frequencies) {
   var oscillator = audioContext.createOscillator();
@@ -52,43 +65,59 @@ function setUpButtons(guesses, checkCorrect) {
     const button = document.getElementById(name);
     button.onclick = () => {
       guesses.push(name);
-      document.getElementById('guess').innerHTML = guesses;
+      render_guesses();
       checkCorrect(guesses);
     };
     document.getElementById('buttons').appendChild(button);
   });
 }
 
-interface Frequencies {
-  [key:string]: Number;
+type Frequencies = {
+ [key in SolfegSound]: Number;
 }
 
 function get_frequencies(): Frequencies {
   const a1 = 110; // A1 is 110 Hz
   const rootPitch = Math.random() * 700 + a1;
-  const frequencies: Frequencies = {};
-  solfeg.forEach((name, index) => {
-    frequencies[name] = rootPitch * Math.pow(2, index/12);
-  });
-  return frequencies;
+  const frequencies = solfeg.reduce((all, name, index) => {
+    all[name] = rootPitch * Math.pow(2, index/12);
+    return all;
+  }, {});
+  return frequencies as Frequencies;
 }
 
+function entered() {
+  console.log("enter pressed");
+}
+
+function delete_last_guess() {
+  guesses.pop();
+  render_guesses();
+}
+
+function render_guesses() {
+  const text = musica.map((note, index) =>
+    guesses[index] ? guesses[index] :  "?"
+  ) .join(', ');
+  document.getElementById('guess').innerHTML = text;
+}
+
+const guesses: Array<SolfegSound> = [];
+let musica: Array<SolfegSound> = []
+
 function main() {
+  musica = ['do', getRandom()];
+  render_guesses();
   const frequencies = get_frequencies();
-  const guesses = [];
-  const musica = ['do', getRandom()];
   setUpButtons(guesses, checkCorrect);
   function checkCorrect(guesses) {
     if (guesses.length < musica.length) { return; }
-    const correct = musica.every((note, index) => guesses[index] == note)
-      ? "correct" : "try again :^)" ;
-    document.getElementById('answer').innerHTML = correct;
-    if (!correct) {
-      guesses.length = 0;
-    }
+    const correct: boolean = musica.every((note, index) =>
+                                          guesses[index] == note);
+    document.getElementById('answer').innerHTML = correct ?
+      "correct" : "try again :^)" ;
   }
   document.getElementById('answer').innerHTML = '';
-  document.getElementById('guess').innerHTML = '';
   playNotes(musica, frequencies);
 }
 
@@ -98,4 +127,12 @@ document.getElementById('play').onclick = main;
 document.getElementById('play').focus();
 document.getElementById('play').onkeydown = (event) => event.key === 'ArrowDown' ? document.getElementById('do').focus() : null;
 
-document.onkeypress = (event) => event.key === 'Enter' ? main() : null;
+document.onkeydown = (event) => {
+  switch (event.key) {
+    case 'Enter': main();
+                  break;
+    case 'Backspace': delete_last_guess();
+                      break;
+    default: console.log("key was pressed: " + event.key)
+  }
+}

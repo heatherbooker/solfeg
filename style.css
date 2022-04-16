@@ -3,3 +3,7 @@ button {
   margin: 2px;
   padding: 4px;
 }
+
+#guess {
+  font-family: monospace;
+}
