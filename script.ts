@@ -23,17 +23,13 @@ function getRandom() {
   return solfeg[Math.floor(Math.random() * solfeg.length)];
 }
 
-function setUpButtons(guesses, checkCorrect) {
-  document.getElementById('buttons').innerHTML = '';
+function draw_buttons() {
+  const buttons_div = document.getElementById('buttons');
+  buttons_div.innerHTML = '';
   solfeg.forEach((name, index) => {
     const button = document.createElement('button');
     button.id = name;
     button.innerHTML = name;
-    button.onclick = () => {
-      guesses.push(name);
-      document.getElementById('guess').innerHTML = guesses;
-      checkCorrect(guesses);
-    };
     button.onkeydown = (event) => {
       switch (event.key) {
         case 'ArrowLeft':
@@ -46,6 +42,18 @@ function setUpButtons(guesses, checkCorrect) {
           document.getElementById('play').focus();
           break;
       }
+    };
+    buttons_div.appendChild(button);
+  });
+}
+
+function setUpButtons(guesses, checkCorrect) {
+  solfeg.forEach((name, index) => {
+    const button = document.getElementById(name);
+    button.onclick = () => {
+      guesses.push(name);
+      document.getElementById('guess').innerHTML = guesses;
+      checkCorrect(guesses);
     };
     document.getElementById('buttons').appendChild(button);
   });
@@ -83,6 +91,8 @@ function main() {
   document.getElementById('guess').innerHTML = '';
   playNotes(musica, frequencies);
 }
+
+draw_buttons();
 
 document.getElementById('play').onclick = main;
 document.getElementById('play').focus();
