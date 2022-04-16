@@ -36,7 +36,24 @@ function setUpButtons(guesses, checkCorrect) {
     const button = document.createElement('button');
     button.id = name;
     button.innerHTML = name;
-    button.onclick = () => { guesses.push(name); checkCorrect(guesses); };
+    button.onclick = () => {
+      guesses.push(name);
+      document.getElementById('guess').innerHTML = guesses;
+      checkCorrect(guesses);
+    };
+    button.onkeydown = (event) => {
+      switch (event.key) {
+        case 'ArrowLeft':
+          document.getElementById(solfeg[index - 1]).focus();
+          break;
+        case 'ArrowRight':
+          document.getElementById(solfeg[index + 1]).focus();
+          break;
+        case 'ArrowUp':
+          document.getElementById('play').focus();
+          break;
+      }
+    };
     document.getElementById('buttons').appendChild(button);
   });
 }
@@ -51,8 +68,12 @@ function main() {
     document.getElementById('answer').innerHTML = correct;
   }
   document.getElementById('answer').innerHTML = '';
+  document.getElementById('guess').innerHTML = '';
   playNotes(musica);
 }
 
 document.getElementById('play').onclick = main;
-document.onkeypress = (event) => event.target.keycode === 13 ? main() : null;
+document.getElementById('play').focus();
+document.getElementById('play').onkeydown = (event) => event.key === 'ArrowDown' ? document.getElementById('do').focus() : null;
+
+document.onkeypress = (event) => event.target.key === 'Enter' ? main() : null;
