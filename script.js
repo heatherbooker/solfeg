@@ -3,16 +3,9 @@ const volume = audioContext.createGain();
 volume.connect(audioContext.destination);
 volume.gain.value = .2;
 
-const rootPitch = 220; // A3
-
 const solfeg = ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te', 'ti'];
-const frequencies = {};
-solfeg.forEach((name, index) => {
-  frequencies[name] = rootPitch * Math.pow(2, index/12);
-});
 
-
-function playNotes(which) {
+function playNotes(which, frequencies) {
   var oscillator = audioContext.createOscillator();
   oscillator.type = "sawtooth";
   oscillator.connect(volume);
@@ -58,7 +51,18 @@ function setUpButtons(guesses, checkCorrect) {
   });
 }
 
+function get_frequencies() {
+  const a2 = 220; // A2 is 220 Hz
+  const rootPitch = Math.random() * 2000 + a2;
+  const frequencies = {};
+  solfeg.forEach((name, index) => {
+    frequencies[name] = rootPitch * Math.pow(2, index/12);
+  });
+  return frequencies;
+}
+
 function main() {
+  const frequencies = get_frequencies();
   const guesses = [];
   const musica = ['do', getRandom()];
   setUpButtons(guesses, checkCorrect);
@@ -72,7 +76,7 @@ function main() {
   }
   document.getElementById('answer').innerHTML = '';
   document.getElementById('guess').innerHTML = '';
-  playNotes(musica);
+  playNotes(musica, frequencies);
 }
 
 document.getElementById('play').onclick = main;
