@@ -52,8 +52,8 @@ function setUpButtons(guesses, checkCorrect) {
 }
 
 function get_frequencies() {
-  const a2 = 220; // A2 is 220 Hz
-  const rootPitch = Math.random() * 1000 + a2;
+  const a1 = 110; // A1 is 110 Hz
+  const rootPitch = Math.random() * 700 + a1;
   const frequencies = {};
   solfeg.forEach((name, index) => {
     frequencies[name] = rootPitch * Math.pow(2, index/12);
