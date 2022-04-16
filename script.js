@@ -66,6 +66,9 @@ function main() {
     if (guesses.length < musica.length) { return; }
     const correct = musica.every((note, index) => guesses[index] == note);
     document.getElementById('answer').innerHTML = correct;
+    if (!correct) {
+      guesses.length = 0;
+    }
   }
   document.getElementById('answer').innerHTML = '';
   document.getElementById('guess').innerHTML = '';
