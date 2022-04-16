@@ -68,7 +68,8 @@ function main() {
   setUpButtons(guesses, checkCorrect);
   function checkCorrect(guesses) {
     if (guesses.length < musica.length) { return; }
-    const correct = musica.every((note, index) => guesses[index] == note);
+    const correct = musica.every((note, index) => guesses[index] == note)
+      ? "correct" : "try again :^)" ;
     document.getElementById('answer').innerHTML = correct;
     if (!correct) {
       guesses.length = 0;
@@ -83,4 +84,4 @@ document.getElementById('play').onclick = main;
 document.getElementById('play').focus();
 document.getElementById('play').onkeydown = (event) => event.key === 'ArrowDown' ? document.getElementById('do').focus() : null;
 
-document.onkeypress = (event) => event.target.key === 'Enter' ? main() : null;
+document.onkeypress = (event) => event.key === 'Enter' ? main() : null;
