@@ -7,3 +7,8 @@ button {
 #guess {
   font-family: monospace;
 }
+
+div#mode-selector {
+  display: block;
+  margin-top: 10px;
+}

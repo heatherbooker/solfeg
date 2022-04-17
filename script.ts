@@ -18,7 +18,14 @@ type SolfegSound = 'do'
 
 const solfeg: Array<SolfegSound> = ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te', 'ti'];
 
-function playNotes(which, frequencies) {
+const songs: Array<Array<SolfegSound>> = [
+  ['do', 'mi', 'so', 'mi', 'fa', 'ra', 'do'],
+  ['mi', 'fa', 'ra', 'mi', 'do'], // beauty and the beast
+  ['mi', 'so', 'ti', 'do', 'fa'], // beauty and the beast
+  ['do', 'so', 'do', 'mi', 'so', 'fa', 'ra', 'do'], // beethoven sonata
+];
+
+function playNotes(which: Array<SolfegSound>) {
   var oscillator = audioContext.createOscillator();
   oscillator.type = "sawtooth";
   oscillator.connect(volume);
@@ -32,8 +39,8 @@ function playNotes(which, frequencies) {
   setTimeout(() => oscillator.stop(), 500 * which.length);
 }
 
-function getRandom() {
-  return solfeg[Math.floor(Math.random() * solfeg.length)];
+function getRandom(from: Array<any>) {
+  return from[Math.floor(Math.random() * from.length)];
 }
 
 function draw_buttons() {
@@ -73,7 +80,7 @@ function setUpButtons(guesses, checkCorrect) {
 }
 
 type Frequencies = {
- [key in SolfegSound]: Number;
+ [key in SolfegSound]: number;
 }
 
 function get_frequencies(): Frequencies {
@@ -104,11 +111,11 @@ function render_guesses() {
 
 const guesses: Array<SolfegSound> = [];
 let musica: Array<SolfegSound> = []
+const frequencies = get_frequencies();
 
-function main() {
-  musica = ['do', getRandom()];
+function do_interval() {
+  musica = ['do', getRandom(solfeg)];
   render_guesses();
-  const frequencies = get_frequencies();
   setUpButtons(guesses, checkCorrect);
   function checkCorrect(guesses) {
     if (guesses.length < musica.length) { return; }
@@ -118,12 +125,44 @@ function main() {
       "correct" : "try again :^)" ;
   }
   document.getElementById('answer').innerHTML = '';
-  playNotes(musica, frequencies);
+  playNotes(musica);
+}
+
+function do_melody() {
+  musica = ['do', ...getRandom(songs)];
+  render_guesses();
+  setUpButtons(guesses, checkCorrect);
+  function checkCorrect(guesses) {
+    if (guesses.length < musica.length) { return; }
+    const correct: boolean = musica.every((note, index) =>
+                                          guesses[index] == note);
+    if (correct) {
+      document.getElementById('answer').innerHTML = "correct";
+      musica.length = 0;
+    } else {
+      document.getElementById('answer').innerHTML = "try again :^)";
+    }
+  }
+  document.getElementById('answer').innerHTML = '';
+  playNotes(musica);
+}
+
+function main() {
+  guesses.length = 0;
+  const mode = (document.querySelector('input[name="mode"]:checked') as HTMLInputElement).value;
+  switch (mode) {
+    case 'interval':
+      do_interval();
+      break;
+    case 'melody':
+      do_melody();
+      break;
+  }
 }
 
 draw_buttons();
 
-document.getElementById('play').onclick = main;
+document.getElementById('play').onclick = () => musica.length ? playNotes(musica) : main();
 document.getElementById('play').focus();
 document.getElementById('play').onkeydown = (event) => event.key === 'ArrowDown' ? document.getElementById('do').focus() : null;
 
