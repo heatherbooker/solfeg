@@ -18,15 +18,27 @@ type SolfegSound = 'do'
 
 const solfeg: Array<SolfegSound> = ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te', 'ti'];
 
-const songs: Array<Array<SolfegSound>> = [
+const _: Array<Array<SolfegSound>> = [
   ['do', 'mi', 'so', 'mi', 'fa', 'ra', 'do'],
   ['mi', 'fa', 'ra', 'mi', 'do'], // beauty and the beast
   ['mi', 'so', 'ti', 'do', 'fa'], // beauty and the beast
   ['do', 'so', 'do', 'mi', 'so', 'fa', 'ra', 'do'], // beethoven sonata
+  ['la', 'so'],
+  ['la', 'do'],
+  ['la', 'fa', 'mi', 'do'],
+  ['so', 'la'],
+  ['fa', 'la', 'so']
+];
+const songs: Array<Array<SolfegSound>> = [
+  ['la', 'so'],
+  ['la', 'do'],
+  ['la', 'fa', 'mi', 'do'],
+  ['so', 'la'],
+  ['fa', 'la', 'so']
 ];
 
 function playNotes(which: Array<SolfegSound>) {
-  var oscillator = audioContext.createOscillator();
+  const oscillator = audioContext.createOscillator();
   oscillator.type = "sawtooth";
   oscillator.connect(volume);
   oscillator.frequency.value = frequencies[which[0]];
@@ -45,7 +57,6 @@ function getRandom(from: Array<any>) {
 
 function draw_buttons() {
   const buttons_div = document.getElementById('buttons');
-  buttons_div.innerHTML = '';
   solfeg.forEach((name, index) => {
     const button = document.createElement('button');
     button.id = name;
@@ -71,6 +82,9 @@ function setUpButtons(guesses, checkCorrect) {
   solfeg.forEach((name, index) => {
     const button = document.getElementById(name);
     button.onclick = () => {
+      if (guesses.length === musica.length) {
+        guesses.length = 0;
+      }
       guesses.push(name);
       render_guesses();
       checkCorrect(guesses);
@@ -109,32 +123,27 @@ function render_guesses() {
   document.getElementById('guess').innerHTML = text;
 }
 
+let correct: boolean = false;
 const guesses: Array<SolfegSound> = [];
 let musica: Array<SolfegSound> = []
 const frequencies = get_frequencies();
 
 function do_interval() {
   musica = ['do', getRandom(solfeg)];
-  render_guesses();
-  setUpButtons(guesses, checkCorrect);
-  function checkCorrect(guesses) {
-    if (guesses.length < musica.length) { return; }
-    const correct: boolean = musica.every((note, index) =>
-                                          guesses[index] == note);
-    document.getElementById('answer').innerHTML = correct ?
-      "correct" : "try again :^)" ;
-  }
-  document.getElementById('answer').innerHTML = '';
-  playNotes(musica);
+  play_game();
 }
 
 function do_melody() {
   musica = ['do', ...getRandom(songs)];
+  play_game();
+}
+
+function play_game() {
   render_guesses();
   setUpButtons(guesses, checkCorrect);
   function checkCorrect(guesses) {
     if (guesses.length < musica.length) { return; }
-    const correct: boolean = musica.every((note, index) =>
+    correct = musica.every((note, index) =>
                                           guesses[index] == note);
     if (correct) {
       document.getElementById('answer').innerHTML = "correct";
@@ -162,7 +171,8 @@ function main() {
 
 draw_buttons();
 
-document.getElementById('play').onclick = () => musica.length ? playNotes(musica) : main();
+document.getElementById('new-game').onclick = () => main();
+document.getElementById('play').onclick = () => playNotes(musica);
 document.getElementById('play').focus();
 document.getElementById('play').onkeydown = (event) => event.key === 'ArrowDown' ? document.getElementById('do').focus() : null;
 
