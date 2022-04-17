@@ -126,7 +126,7 @@ function render_guesses() {
 let correct: boolean = false;
 const guesses: Array<SolfegSound> = [];
 let musica: Array<SolfegSound> = []
-const frequencies = get_frequencies();
+let frequencies = get_frequencies();
 
 function do_interval() {
   musica = ['do', getRandom(solfeg)];
@@ -157,6 +157,7 @@ function play_game() {
 }
 
 function main() {
+  frequencies = get_frequencies();
   guesses.length = 0;
   const mode = (document.querySelector('input[name="mode"]:checked') as HTMLInputElement).value;
   switch (mode) {
