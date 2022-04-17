@@ -125,17 +125,15 @@ function render_guesses() {
 
 let correct: boolean = false;
 const guesses: Array<SolfegSound> = [];
-let musica: Array<SolfegSound> = []
+let musica: Array<SolfegSound> = ['do', getRandom(solfeg)];
 let frequencies = get_frequencies();
 
-function do_interval() {
+function setup_interval() {
   musica = ['do', getRandom(solfeg)];
-  play_game();
 }
 
-function do_melody() {
+function setup_melody() {
   musica = ['do', ...getRandom(songs)];
-  play_game();
 }
 
 function play_game() {
@@ -147,39 +145,45 @@ function play_game() {
                                           guesses[index] == note);
     if (correct) {
       document.getElementById('answer').innerHTML = "correct";
-      musica.length = 0;
     } else {
       document.getElementById('answer').innerHTML = "try again :^)";
     }
   }
   document.getElementById('answer').innerHTML = '';
   playNotes(musica);
+  document.getElementById('play').onclick = () => playNotes(musica);
 }
 
-function main() {
+function setup_game() {
   frequencies = get_frequencies();
   guesses.length = 0;
+  musica.length = 0;
   const mode = (document.querySelector('input[name="mode"]:checked') as HTMLInputElement).value;
   switch (mode) {
     case 'interval':
-      do_interval();
+      setup_interval();
       break;
     case 'melody':
-      do_melody();
+      setup_melody();
       break;
   }
 }
 
+function new_game() {
+  setup_game();
+  play_game();
+}
+
 draw_buttons();
 
-document.getElementById('new-game').onclick = () => main();
-document.getElementById('play').onclick = () => playNotes(musica);
+document.getElementById('new-game').onclick = () => new_game();
+document.getElementById('play').onclick = () => play_game();
 document.getElementById('play').focus();
 document.getElementById('play').onkeydown = (event) => event.key === 'ArrowDown' ? document.getElementById('do').focus() : null;
 
 document.onkeydown = (event) => {
   switch (event.key) {
-    case 'Enter': main();
+    case 'Enter': new_game();
                   break;
     case 'Backspace': delete_last_guess();
                       break;
