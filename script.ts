@@ -16,7 +16,11 @@ type SolfegSound = 'do'
                  | 'te'
                  | 'ti' ;
 
-const solfeg: Array<SolfegSound> = ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te', 'ti'];
+const solfeg: Array<SolfegSound> =
+  ['do', 're', 'ra', 'me', 'mi', 'fa', 'se', 'so', 'le', 'la', 'te', 'ti'];
+
+const ionian: Array<SolfegSound> =
+  ['do', 'ra', 'mi', 'fa', 'so', 'la', 'ti'];
 
 const _: Array<Array<SolfegSound>> = [
   ['do', 'mi', 'so', 'mi', 'fa', 'ra', 'do'],
@@ -60,6 +64,13 @@ function draw_buttons() {
   solfeg.forEach((name, index) => {
     const button = document.createElement('button');
     button.id = name;
+    if (ionian.includes(name)) {
+      button.className = "diatonic";
+      buttons_div.querySelector('#diatonic-buttons').appendChild(button);
+    } else {
+      button.className = "chromatic";
+      buttons_div.querySelector('#chromatic-buttons').appendChild(button);
+    }
     button.innerHTML = name;
     button.onkeydown = (event) => {
       switch (event.key) {
@@ -74,7 +85,6 @@ function draw_buttons() {
           break;
       }
     };
-    buttons_div.appendChild(button);
   });
 }
 
@@ -89,7 +99,6 @@ function setUpButtons(guesses, checkCorrect) {
       render_guesses();
       checkCorrect(guesses);
     };
-    document.getElementById('buttons').appendChild(button);
   });
 }
 
@@ -146,7 +155,7 @@ function play_game() {
     if (correct) {
       document.getElementById('answer').innerHTML = "correct";
     } else {
-      document.getElementById('answer').innerHTML = "try again :^)";
+      document.getElementById('answer').innerHTML = "try :^)";
     }
   }
   document.getElementById('answer').innerHTML = '';
