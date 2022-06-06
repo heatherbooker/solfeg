@@ -127,7 +127,7 @@ function delete_last_guess() {
 
 function render_guesses() {
   const text = musica.map((note, index) =>
-    guesses[index] ? guesses[index] :  "?"
+    guesses[index] ? guesses[index] :  "??"
   ) .join(', ');
   document.getElementById('guess').innerHTML = text;
 }
