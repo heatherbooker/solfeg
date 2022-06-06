@@ -6,6 +6,11 @@ button {
 
 #guess {
   font-family: monospace;
+  font-size: 20pt;
+}
+
+#answer {
+  font-size: 20pt;
 }
 
 div#mode-selector {
