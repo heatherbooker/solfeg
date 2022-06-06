@@ -155,7 +155,7 @@ function play_game() {
     if (correct) {
       document.getElementById('answer').innerHTML = "correct";
     } else {
-      document.getElementById('answer').innerHTML = "try :^)";
+      document.getElementById('answer').innerHTML = "try again :^)";
     }
   }
   document.getElementById('answer').innerHTML = '';
